@@ -19,23 +19,21 @@ public class CompareTool {
 		String path2 = readProperty.getProperty("path2") == null ? null
 				: readProperty.getProperty("path2").toString();
 		if (isEmpty(path1) || isEmpty(path2)) {
-			System.out.println("Path1とPath2を指定してください！");
 			return;
 		}
 		String diffFolder = System.getProperty("user.dir") + "/diffForder/";
-		reCreatediffForder(diffFolder);
+		File dest = new File(diffFolder);
+		if (!dest.exists())
+			dest.mkdirs();
 		Map<String, FileModel> fileMap1 = getFiles(path1);
 		Map<String, FileModel> fileMap2 = getFiles(path2);
 		List<FileModel> result = new ArrayList<FileModel>();
-		// result.addAll(compareFile(fileMap1, fileMap2));
+		result.addAll(compareFile(fileMap1, fileMap2));
 		result.addAll(compareFile(fileMap2, fileMap1));
 		if (result.size() <= 0) {
-			System.out.println("異なるファイルふぁない！");
 			return;
 		}
-		System.out.println("差分したファイル数：" + result.size());
 		for (FileModel fileModel : result) {
-			System.out.println("差分したファイルのパス：	,"
 					+ fileModel.getFile().getAbsolutePath());
 			File destFile = new File(diffFolder
 					+ fileModel.getFile().getAbsolutePath()
@@ -124,14 +122,7 @@ public class CompareTool {
 		outStream.close();
 	}
 
-private static void reCreatediffForder(String path) throws Exception{
-File folder=new File(path);
-if(folder.exists())
-	folder.delete();
-	folder.mkdirs();
-}
-
-	public static String addSlantLine(String path) {
+	private static String addSlantLine(String path) {
 		String result = "";
 		if (path.endsWith("/") || path.endsWith("\\"))
 			result = path;
